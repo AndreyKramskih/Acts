@@ -13,6 +13,7 @@ import os
 # во временную папку Windows. Соответственно, в скрипте нужно обращаться к ним
 #Для обращения к этим файлам и нужна функция ниже
 #https://ru.stackoverflow.com/questions/1472473/%d0%90%d0%b2%d1%82%d0%be%d0%bd%d0%be%d0%bc%d0%bd%d1%8b%d0%b9-%d0%b8%d1%81%d0%bf%d0%be%d0%bb%d0%bd%d1%8f%d0%b5%d0%bc%d1%8b%d0%b9-%d1%84%d0%b0%d0%b9%d0%bb-%d0%b2-python
+# По ссылке смотри описание
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -31,7 +32,7 @@ def make_act():
 # Функция создания акта
 def safe_act():
     # Проверка если спецификация была не загружена, то нет возможности создать акт
-    if xl_arr.shape[0] == 1:
+    if xl_arr.shape[0] <= 1:
         make_act()
         return
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
@@ -160,6 +161,7 @@ def open_table():
         df_cleaned=df.dropna()
         # Из полученного датафрейма получаем двумерный массив средствами numpy
         xl_arr=df_cleaned.to_numpy()
+        #print(xl_arr.shape[0])
 """""
 #Функция создания таблицы здесь не требуется так как мы заполняем существующую в шаблоне
 def create_table(document, headers, rows, style='Table Grid'):
