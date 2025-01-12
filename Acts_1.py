@@ -1,6 +1,4 @@
 from tkinter.ttk import Combobox
-
-import numpy
 import numpy as np
 from tkinter import *
 from tkinter import filedialog
@@ -10,7 +8,7 @@ from tkinter.messagebox import showinfo
 from tkinter import font
 import sys
 import os
-import math
+
 
 
 #при запуске exe'шника все внутренности программы распаковываюся
@@ -39,27 +37,44 @@ def safe_act():
     if len(lst_xl) <= 1:
         make_act()
         return
+    global document
+    global context
+
+    # Данные для заполнения шаблона
+    context = {
+        'station': station.get(),
+        'calc': calc.get(),
+        'company': company.get(),
+        'object': obj.get(),
+        'address': address.get(),
+        # 'number': number.get(),
+        # 'name': name.get(),
+        'data': data.get()
+    }
+
+    if type_choies.get() == 'входного контроля основного оборудования':
+        context['number'] = '1.1'
+        context['name'] = 'ВХОДНОГО КОНТРОЛЯ ОСНОВНОГО ОБОРУДОВАНИЯ'
+    elif type_choies.get() == 'установки основного оборудования':
+        context['number'] = '7'
+        context['name'] = 'УСТАНОВКИ ОСНОВНОГО ОБОРУДОВАНИЯ'
+    elif type_choies.get() == 'входного контроля арматуры':
+        context['number'] = '1.2'
+        context['name'] = 'ВХОДНОГО КОНТРОЛЯ АРМАТУРЫ'
+    elif type_choies.get() == 'монтажа арматуры':
+        context['number'] = '8'
+        context['name'] = 'МОНТАЖА АРМАТУРЫ'
+    elif type_choies.get() == 'входного контроля оборудования КИПиА':
+        context['number'] = '1.3'
+        context['name'] = 'ВХОДНОГО КОНТРОЛЯ ОБОРУДОВАНИЯ КИПиА'
+
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
-    filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+name.get().lower())
+    filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+str(context['name']).lower())
     if filepath != "" and len(lst_xl)>1:
         # Заголовки таблицы (при использовании шаблона они не нужны и используюся только для подсчета
         # столбцов
         headers = ('№ ', 'Поз.', 'Наименование', 'Тип, марка\nматериал\nТехническая\nдокументация',
                    'Завод -\nизготовитель', 'Кол-\nво,\nшт')
-
-        global document
-
-        # Данные для заполнения шаблона
-        context = {
-            'station': station.get(),
-            'calc': calc.get(),
-            'company': company.get(),
-            'object': obj.get(),
-            'address': address.get(),
-            'number': number.get(),
-            'name': name.get(),
-            'data': data.get()
-        }
 
         # Заполнение шаблона данными
         document.render(context)
@@ -70,11 +85,14 @@ def safe_act():
         # Количество колонок таблицы
         cols_number = len(headers)
         #Если выбран тип акта основное оборудование
-        if type_choies.get() == 'Акт основного оборудования':
+        if type_choies.get() == 'входного контроля основного оборудования':
 
             # Создается пустой список размера как список из таблицы xlsx и потом он очищается от мусора в памяти
+
             f_list = np.empty((1, len(lst_xl[0]))).tolist()
+
             f_list.clear()
+
             #Производится проверка полного списка по выбранным критериям и заполняется список акта основного оборудования
             f_list += [x for x in lst_xl if 'теплообменник' in str(x).lower()]
             f_list += [x for x in lst_xl if 'насос' in str(x).lower()]
@@ -82,19 +100,64 @@ def safe_act():
             f_list += [x for x in lst_xl if 'регулятор давления' in str(x).lower()]
             f_list += [x for x in lst_xl if 'частотный преобразователь' in str(x).lower()]
 
+
             # Добавляются в список столбец номеров по порядку в начало
             j = 1
+
             for i in range(0, len(f_list)):
                 f_list[i].insert(0, j)
+
                 j += 1
+
+
 
             # Заполняется таблица шаблона списком основного оборудования
             for row in f_list:
                 row_cells = new_table.add_row().cells
                 for i in range(cols_number):
                     row_cells[i].text = str(row[i])
+
+            # Убираем первый столбец с нумерацией
+            for i in range(0, len(f_list)):
+                f_list[i].pop(0)
+
+
         # Далее аналогично двум другим выборкам
-        elif type_choies.get() == 'Акт вспомогательного оборудования':
+        elif type_choies.get() =='установки основного оборудования':
+
+            # Создается пустой список размера как список из таблицы xlsx и потом он очищается от мусора в памяти
+
+            ff_list = np.empty((1, len(lst_xl[0]))).tolist()
+
+            ff_list.clear()
+
+            # Производится проверка полного списка по выбранным критериям и заполняется список акта основного оборудования
+            ff_list += [x for x in lst_xl if 'теплообменник' in str(x).lower()]
+            ff_list += [x for x in lst_xl if 'насос' in str(x).lower()]
+            ff_list += [x for x in lst_xl if 'регулирующий' in str(x).lower()]
+            ff_list += [x for x in lst_xl if 'регулятор давления' in str(x).lower()]
+            ff_list += [x for x in lst_xl if 'частотный преобразователь' in str(x).lower()]
+
+
+
+            # Добавляются в список столбец номеров по порядку в начало
+            j = 1
+            for i in range(0, len(ff_list)):
+                ff_list[i].insert(0, j)
+                j += 1
+
+
+
+            # Заполняется таблица шаблона списком основного оборудования
+            for row in ff_list:
+                row_cells = new_table.add_row().cells
+                for i in range(cols_number):
+                    row_cells[i].text = str(row[i])
+
+            for i in range(0, len(ff_list)):
+                ff_list[i].pop(0)
+
+        elif type_choies.get() == 'входного контроля арматуры':
 
             s_list = np.empty((1, len(lst_xl[0]))).tolist()
             s_list.clear()
@@ -128,7 +191,50 @@ def safe_act():
                 row_cells = new_table.add_row().cells
                 for i in range(cols_number):
                     row_cells[i].text = str(row[i])
-        elif type_choies.get() == 'Акт КИПиА':
+
+            for i in range(0, len(s_list)):
+                s_list[i].pop(0)
+
+        elif type_choies.get() =='монтажа арматуры':
+
+
+            ss_list = np.empty((1, len(lst_xl[0]))).tolist()
+            ss_list.clear()
+
+
+            ss_list += [x for x in lst_xl if 'фильтр' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'обратный' in str(x).lower()]
+            #ss_list += [x for x in lst_xl if 'вентиль' in str(x).lower()]
+            #ss_list += [x for x in lst_xl if 'шаровой' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'конденсатоотвод' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'балансировоч' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'прерыватель' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'бак' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'гидроаккумулятор' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'затвор' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'предохранительный' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'соленоидный' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'накип' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'запорный' in str(x).lower()]
+
+
+
+
+            j = 1
+            for i in range(0, len(ss_list)):
+                ss_list[i].insert(0, j)
+                j += 1
+
+
+            for row in ss_list:
+                row_cells = new_table.add_row().cells
+                for i in range(cols_number):
+                    row_cells[i].text = str(row[i])
+
+            for i in range(0, len(ss_list)):
+                ss_list[i].pop(0)
+
+        elif type_choies.get() == 'входного контроля оборудования КИПиА':
             #создаем пустой список th_list с 1 строкой и количеством столбцов как в глобальном
             # списке lst_xl
             th_list = np.empty((1, len(lst_xl[0]))).tolist()
@@ -164,6 +270,9 @@ def safe_act():
                 row_cells = new_table.add_row().cells
                 for i in range(cols_number):
                     row_cells[i].text = str(row[i])
+
+            for i in range(0, len(th_list)):
+                th_list[i].pop(0)
         # Если выборки не сделано, то таблица в шаблоне наполняется полным списком из спецификации
         else:
 
@@ -179,6 +288,9 @@ def safe_act():
                 row_cells = new_table.add_row().cells
                 for i in range(cols_number):
                     row_cells[i].text = str(row[i])
+
+            for i in range(0, len(xl_list)):
+                xl_list[i].pop(0)
 
         document.save(filepath)
 
@@ -266,7 +378,7 @@ root=Tk()
 # Заголовок
 root.title('Подготовка Актов')
 # Размер окна
-root.geometry('800x600+100+100')
+root.geometry('800x500+100+100')
 # Иконка в титуле приложения
 root.iconbitmap(default=resource_path('res/_brend.ico'))
 
@@ -299,6 +411,7 @@ address =Entry(root, font=font2)
 address.place(x=20, y=220, width=650)
 address.insert(0,'Введите название адреса')
 
+"""""
 number =Entry(root, font=font1)
 number.place(x=20, y=260, width=650)
 number.insert(0,'Введите номер акта')
@@ -307,20 +420,23 @@ name =Entry(root, font=font1)
 name.place(x=20, y=300, width=650)
 name.insert(0,'Введите название акта')
 
+"""
+
 data =Entry(root, font=font2)
-data.place(x=20, y=340, width=650)
+data.place(x=20, y=2600, width=650)
 data.insert(0,'Введите дату')
 
 acttype=Label(root, text='Выберите тип акта', font=("Arial", 11, "bold"))
-acttype.place(x=20, y=380)
+acttype.place(x=20, y=300)
 
-type_acts=['Акт основного оборудования', 'Акт вспомогательного оборудования', 'Акт КИПиА']
+type_acts=['входного контроля основного оборудования', 'входного контроля арматуры',
+           'входного контроля оборудования КИПиА', 'установки основного оборудования', 'монтажа арматуры']
 # по умолчанию будет выбран первый элемент из languages
 type_var = StringVar(value=type_acts[0])
 
 # Ниспадающий список
 type_choies=Combobox(textvariable=type_var, values=type_acts, state="readonly")
-type_choies.place(x=20, y=410)
+type_choies.place(x=20, y=330, width=350)
 
 #Кнопка открытия спецификации
 file_button=Button(text='Открыть спец', command=open_table, font=("Arial", 12, "bold"))
@@ -328,12 +444,13 @@ file_button.place(x=400, y=20)
 
 #Кнопка создания актов
 btn=Button(text='Создать Акт', command=safe_act, font=("Arial", 12, "bold"))
-btn.place(x=400, y=400)
+btn.place(x=500, y=320)
 
 
 # Загрузка шаблона
 document = DocxTemplate(resource_path('res\Шаблон.docx'))
 
 lst_xl=[]
+context={}
 
 root.mainloop()
