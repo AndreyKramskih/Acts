@@ -303,6 +303,14 @@ def open_table():
     if table_path !="":
         #df = pd.read_excel(table_path, sheet_name='Table 1', skiprows=2)
         df = pd.read_excel(table_path, skiprows=2)
+        # Получение количества столбцов датафрейма
+        a=df.shape[1]
+        # если столбцов больше 5 то остальные удаляются
+        if a>5:
+            df = df.drop(df.columns[[5, a-1]], axis=1)
+        #удаление строк из датарейма если в двух столбцах у них Nan
+        df = df.drop(df[(df[df.columns[2]].isnull()) & (df[df.columns[3]].isnull())].index)
+
         #Из датафрейма удаляются все строки содержащие пустые ячейки
         #df_cleaned=df.dropna()
         # Из полученного датафрейма получаем двумерный массив средствами numpy
