@@ -249,8 +249,9 @@ def safe_act():
             th_list += [x for x in lst_xl if 'одновентильный' in str(x).lower()]
             th_list += [x for x in lst_xl if 'охладитель' in str(x).lower()]
             th_list += [x for x in lst_xl if 'трубка' in str(x).lower()]
-            th_list += [x for x in lst_xl if 'гильза' in str(x).lower()]
+            th_list += [x for x in lst_xl if 'расходомер' in str(x).lower()]
             th_list += [x for x in lst_xl if 'счетчик' in str(x).lower()]
+
 
             #создаем столбец сквозной нумерации
             j = 1
