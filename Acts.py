@@ -175,6 +175,7 @@ def safe_act():
             s_list += [x for x in lst_xl if 'соленоидный' in str(x).lower()]
             s_list += [x for x in lst_xl if 'накип' in str(x).lower()]
             s_list += [x for x in lst_xl if 'запорный' in str(x).lower()]
+            s_list += [x for x in lst_xl if 'сепаратор' in str(x).lower()]
 
 
 
@@ -214,6 +215,7 @@ def safe_act():
             ss_list += [x for x in lst_xl if 'соленоидный' in str(x).lower()]
             ss_list += [x for x in lst_xl if 'накип' in str(x).lower()]
             ss_list += [x for x in lst_xl if 'запорный' in str(x).lower()]
+            ss_list += [x for x in lst_xl if 'сепаратор' in str(x).lower()]
 
 
 
@@ -251,6 +253,7 @@ def safe_act():
             th_list += [x for x in lst_xl if 'трубка' in str(x).lower()]
             th_list += [x for x in lst_xl if 'расходомер' in str(x).lower()]
             th_list += [x for x in lst_xl if 'счетчик' in str(x).lower()]
+            th_list += [x for x in lst_xl if 'погружн' in str(x).lower()]
 
 
             #создаем столбец сквозной нумерации
