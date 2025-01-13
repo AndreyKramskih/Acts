@@ -36,7 +36,7 @@ def safe_act():
         make_act()
         return
     global document
-    global context
+    #global context
 
     # Данные для заполнения шаблона
     context = {
@@ -449,6 +449,6 @@ btn.place(x=500, y=320)
 document = DocxTemplate(resource_path('res\Шаблон.docx'))
 
 lst_xl=[]
-context={}
+#context={}
 
 root.mainloop()
