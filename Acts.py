@@ -301,16 +301,18 @@ def open_table():
 
     # Если файл выбран, то данные из листа с названием Table 1 читаются датафрейм пандас
     if table_path !="":
-        df = pd.read_excel(table_path, sheet_name='Table 1', skiprows=2)
+        #df = pd.read_excel(table_path, sheet_name='Table 1', skiprows=2)
+        df = pd.read_excel(table_path, skiprows=2)
         #Из датафрейма удаляются все строки содержащие пустые ячейки
         #df_cleaned=df.dropna()
         # Из полученного датафрейма получаем двумерный массив средствами numpy
         #xl_arr=df_cleaned.to_numpy()
         #df.fillna(0.0)
         #print(df.columns)
-        df['Кол-во']=df['Кол-во'].astype(float)
+        #df['Кол-во']=df['Кол-во'].astype(float)
         #из датафрейма df создаем двумерный массив
         xl_arr = df.to_numpy()
+
 
         #из двумерного массива создаем список lst строк string
         # столбцы массива помещаем в строку через разделитель *
