@@ -25,6 +25,11 @@ def resource_path(relative_path):
 # Функция вызывающее информационное окно для напоминания о выборе нужного файла спецификации
 def open_spec():
     showinfo(title="Информация", message="Выберете спецификацию в формате xlsx")
+
+# Функция вызывающее информационное окно для напоминания о выборе нужного файла спецификации
+def info_head():
+    showinfo(title="Информация", message="Выберете файл с полями акта в формате xlsx")
+
 # Функция вызывающая информационное окно когда не загружена спецификация при попытке создания акта
 def make_act():
     showinfo(title="Информация", message="Проверьте что спецификация загружена!")
@@ -296,6 +301,28 @@ def safe_act():
 
         document.save(filepath)
 
+# функция открытия файла с полями шапки
+def open_head():
+    # Информационное окно напоминающее, что нужно выбрать для открытия файл спецификации формата xlsx
+    info_head()
+    head_path=filedialog.askopenfilename()
+    global name_station
+    global number_calc
+    global company_name
+    global obj_name
+    global addr_obj
+    global dt
+    # Если файл выбран, то данные из листа с названием Table 1 читаются датафрейм пандас
+    if head_path !="":
+       df = pd.read_excel(head_path)
+       name_station.set(df[df.columns[1]].iloc[0])
+       number_calc.set(df[df.columns[1]].iloc[1])
+       company_name.set(df[df.columns[1]].iloc[2])
+       obj_name.set(df[df.columns[1]].iloc[3])
+       addr_obj.set(df[df.columns[1]].iloc[4])
+       dt.set(df[df.columns[1]].iloc[5])
+
+
 #Функция открытия xlsx файла с помощью диалогового окна выбора файла в системе
 def open_table():
     # Информационное окно напоминающее, что нужно выбрать для открытия файл спецификации формата xlsx
@@ -402,24 +429,39 @@ font2 = font.Font(family= "Times New Roman", size=11, weight="normal", slant="ro
 name_form=Label(root, text='Заполните данные шапки акта', font=("Arial", 11, "bold"))
 name_form.place(x=20, y=20)
 
+#привязываем переменную name_station к полю ввода названия установки
+name_station = StringVar()
+
 #Поле ввода текста
-station =Entry(root, font=font1)
+station =Entry(root, font=font1, textvariable=name_station)
 station.place(x=20, y=60, width=650)
 station.insert(0,'Введите название установки')
 
-calc =Entry(root, font=font1)
+#привязываем переменную number_cal к полю ввода номер расчета
+number_calc = StringVar()
+
+calc =Entry(root, font=font1, textvariable=number_calc)
 calc.place(x=20, y=100, width=650)
 calc.insert(0,'Введите номер расчета')
 
-company =Entry(root, font=font2)
+#привязываем переменную company_name к полю ввода название компании
+company_name = StringVar()
+
+company =Entry(root, font=font2, textvariable=company_name)
 company.place(x=20, y=140, width=650)
 company.insert(0,'Введите название компании')
 
-obj =Entry(root, font=font2)
+#привязываем переменную obj_name к полю ввода название обьекта
+obj_name = StringVar()
+
+obj =Entry(root, font=font2, textvariable=obj_name)
 obj.place(x=20, y=180, width=650)
 obj.insert(0,'Введите название обьекта')
 
-address =Entry(root, font=font2)
+#привязываем переменную addr_obj к полю ввода адресс обьекта
+addr_obj = StringVar()
+
+address =Entry(root, font=font2, textvariable=addr_obj)
 address.place(x=20, y=220, width=650)
 address.insert(0,'Введите название адреса')
 
@@ -434,8 +476,11 @@ name.insert(0,'Введите название акта')
 
 """
 
-data =Entry(root, font=font2)
-data.place(x=20, y=2600, width=650)
+#привязываем переменную dt к полю ввода дата
+dt = StringVar()
+
+data =Entry(root, font=font2, textvariable=dt )
+data.place(x=20, y=260, width=650)
 data.insert(0,'Введите дату')
 
 acttype=Label(root, text='Выберите тип акта', font=("Arial", 11, "bold"))
@@ -454,9 +499,13 @@ type_choies.place(x=20, y=330, width=350)
 file_button=Button(text='Открыть спец', command=open_table, font=("Arial", 12, "bold"))
 file_button.place(x=400, y=20)
 
+#Кнопка открытия файла xlsx c полями шапки
+head_button=Button(text='Поля шапки', command=open_head, font=("Arial", 12, "bold"))
+head_button.place(x=560, y=20)
+
 #Кнопка создания актов
 btn=Button(text='Создать Акт', command=safe_act, font=("Arial", 12, "bold"))
-btn.place(x=500, y=320)
+btn.place(x=560, y=320)
 
 
 # Загрузка шаблона
