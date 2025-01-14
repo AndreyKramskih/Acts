@@ -8,6 +8,7 @@ from tkinter.messagebox import showinfo
 from tkinter import font
 import sys
 import os
+import re
 
 #при запуске exe'шника все внутренности программы распаковываюся
 # во временную папку Windows. Соответственно, в скрипте нужно обращаться к ним
@@ -219,7 +220,7 @@ def safe_act():
             ss_list += [x for x in lst_xl if 'предохранительный' in str(x).lower()]
             ss_list += [x for x in lst_xl if 'соленоидный' in str(x).lower()]
             ss_list += [x for x in lst_xl if 'накип' in str(x).lower()]
-            ss_list += [x for x in lst_xl if 'запорный' in str(x).lower()]
+            #ss_list += [x for x in lst_xl if 'запорный' in str(x).lower()]
             ss_list += [x for x in lst_xl if 'сепаратор' in str(x).lower()]
 
 
@@ -249,7 +250,19 @@ def safe_act():
             th_list += [x for x in lst_xl if 'манометр'  in str(x).lower()]
             th_list += [x for x in lst_xl if 'термометр' in str(x).lower()]
             th_list += [x for x in lst_xl if 'термостат ' in str(x).lower()]
-            th_list += [x for x in lst_xl if 'датчик' in str(x).lower()]
+            #th_list += [x for x in lst_xl if 'датчик' in str(x).lower()]
+
+
+            th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('погруж' in str(x).lower())]
+            th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('уровня' in str(x).lower())]
+            th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('давления' in str(x).lower())]
+            th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('нар' in str(x).lower())]
+
+            th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('помещ' in str(x).lower())]
+
+            th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('гильза' in str(x).lower())]
+
+
             th_list += [x for x in lst_xl if 'реле' in str(x).lower()]
             th_list += [x for x in lst_xl if 'прессостат' in str(x).lower()]
             th_list += [x for x in lst_xl if 'трехходовой' in str(x).lower()]
@@ -258,7 +271,7 @@ def safe_act():
             th_list += [x for x in lst_xl if 'трубка' in str(x).lower()]
             th_list += [x for x in lst_xl if 'расходомер' in str(x).lower()]
             th_list += [x for x in lst_xl if 'счетчик' in str(x).lower()]
-            #th_list += [x for x in lst_xl if 'погружн' in str(x).lower()]
+            th_list += [x for x in lst_xl if ('гильза' in str(x).lower()) and not ('датчик' in str(x).lower())]
 
 
             #создаем столбец сквозной нумерации
