@@ -351,8 +351,9 @@ def open_table():
         a=df.shape[1]
         # если столбцов больше 5 то остальные удаляются
         if a>5:
-            df = df.drop(df.columns[[5, a-1]], axis=1)
-        #удаление строк из датарейма если в двух столбцах у них Nan
+            #df = df.drop(df.columns[[5, a-1]], axis=1)
+            df = df[[df.columns[0], df.columns[1], df.columns[2], df.columns[3], df.columns[4]]]
+            #удаление строк из датарейма если в двух столбцах у них Nan
         df = df.drop(df[(df[df.columns[2]].isnull()) & (df[df.columns[3]].isnull())].index)
 
         #Из датафрейма удаляются все строки содержащие пустые ячейки
