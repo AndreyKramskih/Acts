@@ -8,7 +8,7 @@ from tkinter.messagebox import showinfo
 from tkinter import font
 import sys
 import os
-import re
+
 
 #при запуске exe'шника все внутренности программы распаковываюся
 # во временную папку Windows. Соответственно, в скрипте нужно обращаться к ним
@@ -261,6 +261,7 @@ def safe_act():
             th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('помещ' in str(x).lower())]
 
             th_list += [x for x in lst_xl if ('датчик' in str(x).lower()) and ('гильза' in str(x).lower())]
+            th_list += [x for x in lst_xl if ('бобышка' in str(x).lower())]
 
 
             th_list += [x for x in lst_xl if 'реле' in str(x).lower()]
