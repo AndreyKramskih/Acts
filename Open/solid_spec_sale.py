@@ -177,7 +177,7 @@ def solid_parce_sale(table_path:str)->list:
                # заносим в первую и единственную строку в 6 столбец значение sum_j
                df_tube_j_sale.iat[0, 5] = sum_j
                # в 4 столбце удаляем значение длины участка в скобках которое было в xlsx файле
-               df_tube_j_sale.iat[0, 3] = df_tube_j_sale.iat[0, 3][-1:df_tube_j_sale.iat[0, 3].rfind('(')]
+               df_tube_j_sale.iat[0, 3] = df_tube_j_sale.iat[0, 3][:df_tube_j_sale.iat[0, 3].rfind('(')]
                # в 6 столбце меняем м на п.м
                df_tube_j_sale.iat[0, 6] = 'п.м.'
 
