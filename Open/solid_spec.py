@@ -13,7 +13,7 @@ def solid_parce(table_path:str)->list:
         # удаляем все строки которые имеют Nan в первом стоблце датафрейм
         df_clean = df.dropna(subset=columns_names_df[0])
         # создаем список номеров из словаря Котенко для труб
-        list_of_tube = list(range(7, 12))
+        list_of_tube = list(range(7, 13))
 
         # создаем датафрейм df_tube в котором только трубы
         df_tube = df_clean[df_clean[columns_names_df[1]].isin(list_of_tube)]
