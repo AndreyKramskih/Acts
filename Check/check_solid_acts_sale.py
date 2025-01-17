@@ -71,7 +71,7 @@ def fill_table_sale(choice:str, col_number:int, elements:list, pad:list, tube:li
         return table_for_fill
 
     ######
-    elif choice == 'закупка':
+    elif choice == '*закупка*':
 
         new_sales_list = sales.copy()
         # Заполняется таблица шаблона списком основного оборудования
