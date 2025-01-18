@@ -8,11 +8,11 @@ from docxtpl import DocxTemplate
 from tkinter import font
 import sys
 import os
-#from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
-from Info.info import info_act, info_spec, info_head
-from Open.solid_spec import solid_parce
-from Check.check_solid_acts import fill_table
+from Check.check_word_list import fill_table
+from Open.spec_project import spec_parce
+from Info import info
+
 
 
 
@@ -29,11 +29,35 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+# функция сохранения всех актов сразу
+def safe_all_acts():
+    # Проверка если спецификация была не загружена, то нет возможности создать акт
+    if len(lst_xl) <= 1:
+        info.info_act()
+        return
+    global enabled
+    enabled=1
+    global document
+    global type_var
+    global dir_path
+    # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
+    info.info_all_acts()
+    dir_path = filedialog.asksaveasfilename()
+    dir_path = dir_path[:dir_path.rfind('/')]
+
+    for i in range(0,5):
+        type_var=type_acts[i]
+        type_choies.set(type_var)
+        safe_act()
+
+    type_var=type_acts[0]
+    type_choies.set(type_var)
+
 # Функция создания акта
 def safe_act():
     # Проверка если спецификация была не загружена, то нет возможности создать акт
-    if len(tube_list) <= 1:
-        info_act()
+    if len(lst_xl) <= 1:
+        info.info_act()
         return
     global document
 
@@ -49,33 +73,38 @@ def safe_act():
         'data': data.get()
     }
 
-    if type_choies.get() == 'входного контроля элементов трубопровода':
-        context['number'] = '2'
-        context['name'] = 'ВХОДНОГО КОНТРОЛЯ ЭЛЕМЕНТОВ ТРУБОПРОВОДА'
-    elif type_choies.get() == 'входного контроля материалов':
-        context['number'] = '3'
-        context['name'] = 'ВХОДНОГО КОНТРОЛЯ МАТЕРИАЛОВ'
-    elif type_choies.get() == 'проверки чистоты труб':
-        context['number'] = '4'
-        context['name'] = 'ПРОВЕРКИ ЧИСТОТЫ ТРУБ'
-    elif type_choies.get() == 'монтажа опор под трубопроводы':
-        context['number'] = '5'
-        context['name'] = 'МОНТАЖА ОПОР ПОД ТРУБОПРОВОДЫ'
-    elif type_choies.get() == 'монтажа трубопроводов':
-        context['number'] = '6'
-        context['name'] = 'МОНТАЖА ТРУБОПРОВОДОВ'
+    if type_choies.get() == 'входного контроля основного оборудования':
+        context['number'] = '1.1'
+        context['name'] = 'ВХОДНОГО КОНТРОЛЯ ОСНОВНОГО ОБОРУДОВАНИЯ'
+    elif type_choies.get() == 'установки основного оборудования':
+        context['number'] = '7'
+        context['name'] = 'УСТАНОВКИ ОСНОВНОГО ОБОРУДОВАНИЯ'
+    elif type_choies.get() == 'входного контроля арматуры':
+        context['number'] = '1.2'
+        context['name'] = 'ВХОДНОГО КОНТРОЛЯ АРМАТУРЫ'
+    elif type_choies.get() == 'монтажа арматуры':
+        context['number'] = '8'
+        context['name'] = 'МОНТАЖА АРМАТУРЫ'
+    elif type_choies.get() == 'входного контроля оборудования КИПиА':
+        context['number'] = '1.3'
+        context['name'] = 'ВХОДНОГО КОНТРОЛЯ ОБОРУДОВАНИЯ КИПиА'
 
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
-    filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+str(context['name']).lower())
-    if filepath != "" and len(tube_list)>1:
+    filepath=''
+    #Проверяется нажата ли кнопка все акты сразу
+    if enabled==1:
+        filepath=dir_path+'/Акт '+str(context['name']).lower()+'.docx'
+
+    elif enabled==0:
+        filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+str(context['name']).lower())
+    if filepath != "" and len(lst_xl)>1:
         # Заголовки таблицы (при использовании шаблона они не нужны и используюся только для подсчета
         # столбцов
-        headers = ('№ ', 'Наименование', 'Размеры, материал',
-                   'Техническая характеристика', 'Кол-во', 'Ед.')
+        headers = ('№ ', 'Поз.', 'Наименование', 'Тип, марка\nматериал\nТехническая\nдокументация',
+                   'Завод -\nизготовитель', 'Кол-\nво,\nшт')
 
         # Заполнение шаблона данными
         document.render(context)
-
         # Получение списка таблиц из файла шаблона
         all_tables = document.tables
         # Поиск таблицы с одной строкой в шаблоне
@@ -83,14 +112,14 @@ def safe_act():
         # Количество колонок таблицы
         cols_number = len(headers)
 
-        new_table=fill_table(type_choies.get(),cols_number,elements_list,pad_list,tube_list,support_list,new_table)
+        new_table=fill_table(type_choies.get(),cols_number,lst_xl,new_table)
 
-    document.save(filepath)
+        document.save(filepath)
 
 # функция открытия файла с полями шапки
 def open_head():
     # Информационное окно напоминающее, что нужно выбрать для открытия файл спецификации формата xlsx
-    info_head()
+    info.info_head()
     head_path=filedialog.askopenfilename()
     global name_station
     global number_calc
@@ -112,23 +141,15 @@ def open_head():
 #Функция открытия xlsx файла с помощью диалогового окна выбора файла в системе
 def open_table():
     # Информационное окно напоминающее, что нужно выбрать для открытия файл спецификации формата xlsx
-    info_spec()
+    info.info_spec()
     table_path=filedialog.askopenfilename()
-    global tube_list
-    global pad_list
-    global support_list
-    global elements_list
-
-    tube_list=solid_parce(table_path)[0]
-    pad_list=solid_parce(table_path)[1]
-    support_list=solid_parce(table_path)[2]
-    elements_list=solid_parce(table_path)[3]
+    global lst_xl
+    lst_xl=spec_parce(table_path)
 
 # Создается оконное приложение
 root=Tk()
 # Заголовок
-root.title('Подготовка актов из спецификации Solidworks')
-root["bg"] = "aquamarine4"
+root.title('Подготовка Актов')
 # Размер окна
 root.geometry('800x500+100+100')
 # Иконка в титуле приложения
@@ -199,8 +220,8 @@ data.insert(0,'Введите дату')
 acttype=Label(root, text='Выберите тип акта', font=("Arial", 11, "bold"))
 acttype.place(x=20, y=300)
 
-type_acts=['входного контроля элементов трубопровода', 'входного контроля материалов',
-           'проверки чистоты труб', 'монтажа опор под трубопроводы', 'монтажа трубопроводов']
+type_acts=['входного контроля основного оборудования', 'входного контроля арматуры',
+           'входного контроля оборудования КИПиА', 'установки основного оборудования', 'монтажа арматуры']
 # по умолчанию будет выбран первый элемент из languages
 type_var = StringVar(value=type_acts[0])
 
@@ -208,28 +229,36 @@ type_var = StringVar(value=type_acts[0])
 type_choies=Combobox(textvariable=type_var, values=type_acts, state="readonly")
 type_choies.place(x=20, y=330, width=350)
 
+#enabled=IntVar()
+
+#Чек бокс для сохранения всех актов сразу
+#all_checkbox=Checkbutton(text='Сделать все акты сразу', variable=enabled, command=safe_all_acts)
+#all_checkbox.place(x=560, y=400)
+
 #Кнопка открытия спецификации
-file_button=Button(text='Открыть спец', command=open_table, font=("Arial", 12, "bold"))
-file_button.place(x=400, y=20)
+spec_button=Button(text='Открыть спец', command=open_table, font=("Arial", 12, "bold"))
+spec_button.place(x=400, y=20)
 
 #Кнопка открытия файла xlsx c полями шапки
 head_button=Button(text='Поля шапки', command=open_head, font=("Arial", 12, "bold"))
 head_button.place(x=560, y=20)
 
 #Кнопка создания актов
-btn=Button(text='Создать Акт', command=safe_act, font=("Arial", 12, "bold"))
-btn.place(x=560, y=320)
+act_button=Button(text='Создать Акт', command=safe_act, font=("Arial", 12, "bold"))
+act_button.place(x=560, y=320)
+
+enabled=0
+#Кнопка сохранения всех актов сразу
+all_acts_button=Button(text='Все акты сразу', command=safe_all_acts, font=("Arial", 12, "bold"))
+all_acts_button.place(x=560, y=360)
+
 
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
+document = DocxTemplate(resource_path('res\Шаблон.docx'))
 
-tube_list=[]
-pad_list=[]
-support_list=[]
-elements_list=[]
+lst_xl=[]
+dir_path=''
 
-#df_fo_dic = pd.read_excel(resource_path('res\Словарь.xlsx'))
-#model_dict=dict(zip(df_fo_dic['id'], df_fo_dic['value']))
 
 root.mainloop()
