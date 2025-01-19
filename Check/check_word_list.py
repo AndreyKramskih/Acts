@@ -1,7 +1,7 @@
 import numpy as np
 from docxtpl import DocxTemplate
 
-def fill_table(choice:str, col_number:int, list_for_check:list, table_for_fill:DocxTemplate) -> DocxTemplate:
+def fill_table_project(choice:str, col_number:int, list_for_check:list, table_for_fill:DocxTemplate) -> DocxTemplate:
 
 #Если выбран тип акта основное оборудование
         if choice == 'входного контроля основного оборудования':

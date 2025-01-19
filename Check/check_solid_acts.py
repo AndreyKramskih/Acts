@@ -3,7 +3,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 
 
-def fill_table(choice:str, col_number:int, elements:list, pad:list, tube:list, support:list, table_for_fill:DocxTemplate) -> DocxTemplate:
+def fill_table_solid(choice:str, col_number:int, elements:list, pad:list, tube:list, support:list, table_for_fill:DocxTemplate) -> DocxTemplate:
     # Если выбран тип акта основное оборудование
     if choice == 'входного контроля элементов трубопровода':
 
