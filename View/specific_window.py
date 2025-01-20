@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import font
 from tkinter.ttk import Combobox
-from tkinter.ttk import Style
+
 
 
 
@@ -15,25 +15,6 @@ class SpecificFrame(ttk.Frame):
         font1 = font.Font(family= "Times New Roman", size=11, weight="bold", slant="roman", underline=False, overstrike=False)
         font2 = font.Font(family= "Times New Roman", size=11, weight="normal", slant="roman", underline=False,
                           overstrike=False)
-
-        ### Цвета вкладок
-
-        # Stiles
-        Mybackground = "#a2f2bc"
-        MyGreen = "#fbf4c0"
-        MyYellow = "#ea400a"
-        test = Style()
-        test.theme_create("my_tables", parent="alt", settings={
-            "TFrame": {"configure": {"background": Mybackground}},
-            "TNotebook": {"configure": {"tabmargins": [2, 0, 2, 0]}},
-            "TNotebook": {
-                "configure": {"background": Mybackground}},
-            "TNotebook.Tab": {
-                "configure": {"padding": [80, 1], "background": MyGreen},
-                "map": {"background": [("selected", MyYellow)]}}})
-        test.theme_use("my_tables")
-
-        ###
 
         # Текстовая метка
         self.name_form = Label(self, text='Заполните данные шапки акта', font=("Arial", 11, "bold"))
@@ -116,9 +97,6 @@ class SpecificFrame(ttk.Frame):
         self.all_acts_button.place(x=560, y=360)
 
 
-    def open_table(self)->int:
-        self.spec_btn.set(1)
-        return self.spec_btn.get()
 
 class SolidFrame(ttk.Frame):
 
@@ -129,6 +107,7 @@ class SolidFrame(ttk.Frame):
                           overstrike=False)
         font2 = font.Font(family="Times New Roman", size=11, weight="normal", slant="roman", underline=False,
                           overstrike=False)
+
 
         # Текстовая метка
         self.name_form = Label(self, text='Заполните данные шапки акта', font=("Arial", 11, "bold"))
