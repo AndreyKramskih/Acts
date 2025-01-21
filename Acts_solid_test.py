@@ -12,7 +12,7 @@ import os
 
 from Info.info import info_act, info_spec, info_head, info_all_acts
 from Open.solid_spec import solid_parce
-from Check.check_solid_acts import fill_table
+from Check.check_solid_acts import fill_table_solid
 
 
 
@@ -38,7 +38,7 @@ def safe_all_acts():
         return
     global enabled
     enabled=1
-    global document
+    global document_spec
     global type_var
     global dir_path
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
@@ -55,13 +55,14 @@ def safe_all_acts():
     type_choies.set(type_var)
 
 
+
 # Функция создания акта
 def safe_act():
     # Проверка если спецификация была не загружена, то нет возможности создать акт
     if len(tube_list) <= 1:
         info_act()
         return
-    global document
+    global document_spec
 
     # Данные для заполнения шаблона
     context = {
@@ -116,7 +117,7 @@ def safe_act():
         # Количество колонок таблицы
         cols_number = len(headers)
 
-        new_table=fill_table(type_choies.get(),cols_number,elements_list,pad_list,tube_list,support_list,new_table)
+        new_table=fill_table_solid(type_choies.get(), cols_number, elements_list, pad_list, tube_list, support_list, new_table)
 
     document.save(filepath)
 
@@ -261,7 +262,7 @@ all_acts_button.place(x=560, y=360)
 
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
+document_spec = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
 
 tube_list=[]
 pad_list=[]
