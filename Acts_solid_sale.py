@@ -37,7 +37,7 @@ def safe_act():
     if len(tube_list) <= 1:
         info_act()
         return
-    global document
+    global document_spec
 
     # Данные для заполнения шаблона
     context = {
@@ -230,7 +230,7 @@ btn.place(x=560, y=320)
 
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
+document_spec = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
 
 tube_list=[]
 pad_list=[]
