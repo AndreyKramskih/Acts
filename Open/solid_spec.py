@@ -89,13 +89,75 @@ def solid_parce(table_path:str)->list:
 
         # создаем список номеров из словаря Котенко для опор
         list_of_support = list(range(68, 70))
+        list_of_support.append(6)
+        list_of_profil=list(range(2, 4))
+
+        ####
+        # создаем датафрейм df_tube в котором только трубы
+        df_profil = df_clean[df_clean[columns_names_df[1]].isin(list_of_profil)]
+
+        # создадим пустой датафрейм
+        df_profil_new = pd.DataFrame(columns=columns_names_df)
+        # добави в него 1 строку с числами
+        df_profil_new.loc[0] = range(0, len(columns_names_df))
+
+        # список уникальных значений в 2 третьем столбце df_profil
+        uniq_val_profil = df_profil[columns_names_df[1]].unique()
+        # проходимся по циклу через все уникальные значения 2 столбца датафрейма профилей
+        for i in range(0, len(uniq_val_profil)):
+            df_profil_i = df_profil[df_profil[columns_names_df[1]] == uniq_val_profil[i]]
+            # список уникальных значений в 3 третьем столбце для каждого уникального во 2 столбце
+            uniq_val_profil_i = df_profil_i[columns_names_df[2]].unique()
+            # проходимся по циклу через все уникальные значения в третьем столбце каждого уникального
+            # во втором
+            for j in range(0, len(uniq_val_profil_i)):
+                df_profil_j = df_profil_i[df_profil_i[columns_names_df[2]] == uniq_val_profil_i[j]]
+                # cчитаем сумму длинн в 6 столбце полученного датафрейма df_profil_j и оставляем 2 знака после
+                # запятой
+                sum_j = round(df_profil_j[columns_names_df[5]].sum(axis=0), 2)
+                # удаляем дубликаты то есть по сути все строки кроме 1 строки в df_profil_j
+                df_profil_j = df_profil_j.drop_duplicates(subset=[columns_names_df[1]])
+                # заносим в первую и единственную строку в 6 столбец значение sum_j
+                df_profil_j.iat[0, 5] = sum_j
+                # в 4 столбце удаляем значение длины участка в скобках которое было в xlsx файле
+                df_profil_j.iat[0, 3] = df_profil_j.iat[0, 3][:df_profil_j.iat[0, 3].find('(')]
+                # в 6 столбце меняем м на п.м
+                df_profil_j.iat[0, 6] = 'п.м.'
+
+                df_profil_new = pd.concat([df_profil_new, df_profil_j], axis=0)  # объединение по вертикали
+
+        # удаляем лишние столбцы из  датафрейма df_profil_new
+        df_profil_new = df_profil_new.drop(df.columns[[1, 4]], axis=1)
+
+
+        # удаляем первую строку из датафрейма df_profil_new
+        df_profil_new = df_profil_new.iloc[1:]
+
+        ####
+
         # создаем датафрейм df_support в котором только опоры и хомуты
         df_support = df_clean[df_clean[columns_names_df[1]].isin(list_of_support)]
 
         # удаляем лишние столбцы из  датафрейма df_support
         df_support = df_support.drop(df.columns[[1, 5]], axis=1)
+
+
+
+        # cоздаем список из названий столбцов полученного
+        columns_names_support = df_support.columns.tolist()
+
+        #заменяем Nan на пробел
+        df_support[columns_names_support[1]] =df_support[columns_names_support[1]] .fillna('Опора')
+        df_support[columns_names_support[4]] = df_support[columns_names_support[4]].fillna('шт.')
+        # переименовываем столбец 4 чтобы был как у труб
+        df_support = df_support.rename(columns={columns_names_support[3]: columns_names_df[5]})
+
+        # обьединяем датафрейм профилей и опор
+        df_support_new = pd.concat([df_profil_new, df_support], axis=0)  # объединение по вертикали
+
+
         # из датафрейма df создаем двумерный массив
-        support_arr = df_support.to_numpy()
+        support_arr = df_support_new.to_numpy()
 
 
         # создаем список
@@ -108,25 +170,89 @@ def solid_parce(table_path:str)->list:
             j += 1
 
         # создаем список номеров из словаря Котенко для материалов элементов трубопроводов
-        list_of_elements = list(range(13, 28))
-        list_of_elements_2 = list(range(63, 67))
-        list_of_elements_3 = list(range(71, 73))
+        list_of_elements = list(range(13, 29))
+        list_of_elements_2 = list(range(63, 68))
+        list_of_elements_3 = list(range(71, 74))
+        list_of_anker=list(range(30, 36))
         # обьединяем списки
         list_of_elements.extend(list_of_elements_2)
         list_of_elements.extend(list_of_elements_3)
+
+        #####
+        # создаем датафрейм df_tube в котором только крепеж
+        df_anker = df_clean[df_clean[columns_names_df[1]].isin(list_of_anker)]
+
+        # создадим пустой датафрейм
+        df_anker_new = pd.DataFrame(columns=columns_names_df)
+        # добавим в него 1 строку с числами
+        df_anker_new.loc[0] = range(0, len(columns_names_df))
+
+        # cоздаем список из названий столбцов полученного
+        columns_names_anker = df_anker.columns.tolist()
+
+        # в 3 столбце удаляем значение  ду в скобках которое было в xlsx файле
+        for i in range(0, df_anker.shape[0]):
+            # в 4 столбце удаляем значение длины участка в скобках которое было в xlsx файле
+            df_anker.iat[i, 2] = df_anker.iat[i, 2][:df_anker.iat[i, 2].find('(')]
+
+
+        # список уникальных значений в 2 третьем столбце df_anker
+        uniq_val_anker = df_anker[columns_names_df[1]].unique()
+        # проходимся по циклу через все уникальные значения 2 столбца датафрейма крепежа
+        for i in range(0, len(uniq_val_anker)):
+            df_anker_i = df_anker[df_anker[columns_names_df[1]] == uniq_val_anker[i]]
+            # список уникальных значений в 3 третьем столбце для каждого уникального во 2 столбце
+            uniq_val_anker_i = df_anker_i[columns_names_df[2]].unique()
+            #print(uniq_val_anker_i)
+            # проходимся по циклу через все уникальные значения в третьем столбце каждого уникального
+            # во втором
+            for j in range(0, len(uniq_val_anker_i)):
+                df_anker_j = df_anker_i[df_anker_i[columns_names_df[2]] == uniq_val_anker_i[j]]
+                # cчитаем сумму длинн в 5 столбце полученного датафрейма df_anker_j и оставляем 2 знака после
+                # запятой
+                #print(df_anker_j.iat[0,4])
+                sum_j = round(df_anker_j[columns_names_df[4]].sum(axis=0), 2)
+                #print(sum_j)
+                # удаляем дубликаты то есть по сути все строки кроме 1 строки в df_anker_j
+                df_anker_j = df_anker_j.drop_duplicates(subset=[columns_names_df[1]])
+                #print(df_anker_j.head())
+                # заносим в первую и единственную строку в 5 столбец значение sum_j
+                df_anker_j.iat[0, 4] = sum_j
+                #print(df_anker_j.iat[0,4])
+
+                df_anker_new = pd.concat([df_anker_new, df_anker_j], axis=0)  # объединение по вертикали
+
+        # удаляем лишние столбцы из  датафрейма df_anker_new
+        df_anker_new = df_anker_new.drop(df.columns[[1, 5]], axis=1)
+        #print(df_anker_new.head())
+
+        # удаляем первую строку из датафрейма df_anker_new
+        df_anker_new = df_anker_new.iloc[1:]
+
+        #####
+
+
+
         # создаем датафрейм df_elements в котором только элементы трубопроводов
         df_elements = df_clean[df_clean[columns_names_df[1]].isin(list_of_elements)]
+
+
 
         # удаляем лишние столбцы из  датафрейма df_elements
         df_elements = df_elements.drop(df.columns[[1, 5]], axis=1)
         # cоздаем список из названий столбцов полученного
         columns_names_elements = df_elements.columns.tolist()
 
-        # переименовываем столбец 4 чтобы был как у труб
-        df_elements = df_elements.rename(columns={columns_names_elements[3]: columns_names_df[5]})
 
-        # обьединяем датафрейм труб и элементов трубопроводов
-        df_elements_new = pd.concat([df_tube_new, df_elements], axis=0)  # объединение по вертикали
+
+        # обьединяем датафрейм крепежа и элементов трубопроводов
+        df_elements_1 = pd.concat([df_elements, df_anker_new], axis=0)  # объединение по вертикали
+
+        # переименовываем столбец 4 чтобы был как у труб
+        df_elements_1 = df_elements_1.rename(columns={columns_names_elements[3]: columns_names_df[5]})
+
+        # обьединяем датафрейм труб и элементов трубопроводов и крепежа
+        df_elements_new = pd.concat([df_tube_new, df_elements_1], axis=0)  # объединение по вертикали
 
         # из датафрейма df создаем двумерный массив
         elements_arr = df_elements_new.to_numpy()
