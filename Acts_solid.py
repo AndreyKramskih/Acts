@@ -12,7 +12,7 @@ import os
 
 from Info.info import info_act, info_spec, info_head
 from Open.solid_spec import solid_parce
-from Check.check_solid_acts import fill_table
+from Check.check_solid_acts import fill_table_solid
 
 
 
@@ -35,7 +35,7 @@ def safe_act():
     if len(tube_list) <= 1:
         info_act()
         return
-    global document
+    global document_spec
 
     # Данные для заполнения шаблона
     context = {
@@ -83,7 +83,7 @@ def safe_act():
         # Количество колонок таблицы
         cols_number = len(headers)
 
-        new_table=fill_table(type_choies.get(),cols_number,elements_list,pad_list,tube_list,support_list,new_table)
+        new_table=fill_table_solid(type_choies.get(), cols_number, elements_list, pad_list, tube_list, support_list, new_table)
 
     document.save(filepath)
 
@@ -222,7 +222,7 @@ btn.place(x=560, y=320)
 
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
+document_spec = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
 
 tube_list=[]
 pad_list=[]
