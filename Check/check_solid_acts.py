@@ -59,7 +59,7 @@ def fill_table_solid(choice:str, col_number:int, elements:list, pad:list, tube:l
 
     elif choice == 'монтажа трубопроводов':
 
-        new_tube_list = tube.copy()
+        new_tube_list = elements.copy()
         # Заполняется таблица шаблона списком основного оборудования
         for row in new_tube_list:
             row_cells = table_for_fill.add_row().cells
