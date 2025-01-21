@@ -9,7 +9,7 @@ from tkinter import font
 import sys
 import os
 
-from Check.check_word_list import fill_table
+from Check.check_word_list import fill_table_project
 from Open.spec_project import spec_parce
 from Info import info
 
@@ -37,7 +37,7 @@ def safe_all_acts():
         return
     global enabled
     enabled=1
-    global document
+    global document_spec
     global type_var
     global dir_path
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
@@ -59,7 +59,7 @@ def safe_act():
     if len(lst_xl) <= 1:
         info.info_act()
         return
-    global document
+    global document_spec
 
     # Данные для заполнения шаблона
     context = {
@@ -112,7 +112,7 @@ def safe_act():
         # Количество колонок таблицы
         cols_number = len(headers)
 
-        new_table=fill_table(type_choies.get(),cols_number,lst_xl,new_table)
+        new_table=fill_table_project(type_choies.get(), cols_number, lst_xl, new_table)
 
         document.save(filepath)
 
@@ -255,7 +255,7 @@ all_acts_button.place(x=560, y=360)
 
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон.docx'))
+document_spec = DocxTemplate(resource_path('res\Шаблон.docx'))
 
 lst_xl=[]
 dir_path=''
