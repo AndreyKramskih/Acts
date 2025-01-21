@@ -14,6 +14,7 @@ from tkinter.ttk import Style
 
 from Check.check_word_list import fill_table_project
 from Open.spec_project import spec_parce
+#from Open.spec_project_new import spec_parce_new
 from Info import info
 from View.specific_window import SpecificFrame, SolidFrame
 from Open.solid_spec import solid_parce
@@ -54,7 +55,7 @@ def safe_all_acts(event):
         return
     global enabled
     enabled=1
-    global document
+    global document_spec
 
     global dir_path
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
@@ -81,7 +82,7 @@ def safe_all_acts_solid(event):
         return
     global enabled
     enabled=1
-    global document
+    global document_solid
 
     global dir_path
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
@@ -106,7 +107,7 @@ def safe_act_project(event):
     if len(lst_xl) <= 1:
         info.info_act()
         return
-    global document
+    global document_spec
 
     # Данные для заполнения шаблона
     context = {
@@ -151,9 +152,9 @@ def safe_act_project(event):
                    'Завод -\nизготовитель', 'Кол-\nво,\nшт')
 
         # Заполнение шаблона данными
-        document.render(context)
+        document_spec.render(context)
         # Получение списка таблиц из файла шаблона
-        all_tables = document.tables
+        all_tables = document_spec.tables
         # Поиск таблицы с одной строкой в шаблоне
         new_table = all_tables[0]
         # Количество колонок таблицы
@@ -161,7 +162,7 @@ def safe_act_project(event):
 
         new_table=fill_table_project(project_frame.type_choies.get(), cols_number, lst_xl, new_table)
 
-        document.save(filepath)
+        document_spec.save(filepath)
 
 
 # Функция создания акта из спецификации солида
@@ -170,7 +171,7 @@ def safe_act_solid(event):
     if len(tube_list) <= 1:
         info.info_act()
         return
-    global document
+    global document_solid
 
     # Данные для заполнения шаблона
     context = {
@@ -215,10 +216,10 @@ def safe_act_solid(event):
                    'Техническая характеристика', 'Кол-во', 'Ед.')
 
         # Заполнение шаблона данными
-        document.render(context)
+        document_solid.render(context)
 
         # Получение списка таблиц из файла шаблона
-        all_tables = document.tables
+        all_tables = document_solid.tables
         # Поиск таблицы с одной строкой в шаблоне
         new_table = all_tables[0]
         # Количество колонок таблицы
@@ -226,7 +227,7 @@ def safe_act_solid(event):
 
         new_table=fill_table_solid(solid_frame.type_choies.get(), cols_number, elements_list, pad_list, tube_list, support_list, new_table)
 
-    document.save(filepath)
+    document_solid.save(filepath)
 
 # функция открытия файла с полями шапки для актов проекта и солида
 def open_head(event):
@@ -263,7 +264,8 @@ def open_table_project(event):
     info.info_spec()
     table_path=filedialog.askopenfilename()
     global lst_xl
-    lst_xl=spec_parce(table_path)
+    #lst_xl=spec_parce(table_path)
+    lst_xl = spec_parce(table_path)
 
 
 #Функция открытия xlsx файла с помощью диалогового окна выбора файла в системе
@@ -369,7 +371,8 @@ solid_frame.act_button.bind("<ButtonRelease-1>", safe_act_solid)
 solid_frame.all_acts_button.bind("<ButtonRelease-1>", safe_all_acts_solid)
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон.docx'))
+document_spec = DocxTemplate(resource_path('res\Шаблон.docx'))
+document_solid = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
 enabled=0
 lst_xl=[]
 dir_path=''
