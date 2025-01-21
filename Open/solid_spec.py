@@ -190,11 +190,13 @@ def solid_parce(table_path:str)->list:
         # cоздаем список из названий столбцов полученного
         columns_names_anker = df_anker.columns.tolist()
 
+
         # в 3 столбце удаляем значение  ду в скобках которое было в xlsx файле
         for i in range(0, df_anker.shape[0]):
             # в 4 столбце удаляем значение длины участка в скобках которое было в xlsx файле
             df_anker.iat[i, 2] = df_anker.iat[i, 2][:df_anker.iat[i, 2].find('(')]
-
+            df_anker.iat[i, 2] = df_anker.iat[i, 2].strip('\n')
+            df_anker.iat[i, 2] = df_anker.iat[i, 2].strip()
 
         # список уникальных значений в 2 третьем столбце df_anker
         uniq_val_anker = df_anker[columns_names_df[1]].unique()
