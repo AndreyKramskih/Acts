@@ -167,7 +167,7 @@ def fill_table_project(choice:str, col_number:int, list_for_check:list, table_fo
             # отчищаем его от мустора в памяти
             th_list.clear()
             #наполняем список по условиям нужных слов
-            th_list += [x for x in list_for_check if 'манометр'  in str(x).lower()]
+            th_list += [x for x in list_for_check if 'манометр'  in str(x).lower() and not ('трехходовой' in str(x).lower())]
             th_list += [x for x in list_for_check if 'термометр' in str(x).lower()]
             th_list += [x for x in list_for_check if 'термостат ' in str(x).lower()]
             #th_list += [x for x in list_for_check if 'датчик' in str(x).lower()]
@@ -193,6 +193,8 @@ def fill_table_project(choice:str, col_number:int, list_for_check:list, table_fo
             th_list += [x for x in list_for_check if 'расходомер' in str(x).lower()]
             th_list += [x for x in list_for_check if 'счетчик' in str(x).lower()]
             th_list += [x for x in list_for_check if ('гильза' in str(x).lower()) and not ('датчик' in str(x).lower())]
+
+
 
 
             #создаем столбец сквозной нумерации
