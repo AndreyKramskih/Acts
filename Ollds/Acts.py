@@ -9,7 +9,7 @@ from tkinter import font
 import sys
 import os
 
-from Check.check_word_list import fill_table
+from Check.check_word_list import fill_table_project
 from Open.spec_project import spec_parce
 from Info import info
 
@@ -25,10 +25,33 @@ def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = os.path.abspath("..")
 
     return os.path.join(base_path, relative_path)
 
+# функция сохранения всех актов сразу
+def safe_all_acts():
+    # Проверка если спецификация была не загружена, то нет возможности создать акт
+    if len(lst_xl) <= 1:
+        info.info_act()
+        return
+    global all_safe_enabled
+    enabled=1
+    global document_spec
+    global type_var
+    global dir_path
+    # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
+    info.info_all_acts()
+    dir_path = filedialog.asksaveasfilename()
+    dir_path = dir_path[:dir_path.rfind('/')]
+
+    for i in range(0,5):
+        type_var=type_acts[i]
+        type_choies.set(type_var)
+        safe_act()
+
+    type_var=type_acts[0]
+    type_choies.set(type_var)
 
 # Функция создания акта
 def safe_act():
@@ -36,7 +59,7 @@ def safe_act():
     if len(lst_xl) <= 1:
         info.info_act()
         return
-    global document
+    global document_spec
 
     # Данные для заполнения шаблона
     context = {
@@ -67,7 +90,13 @@ def safe_act():
         context['name'] = 'ВХОДНОГО КОНТРОЛЯ ОБОРУДОВАНИЯ КИПиА'
 
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
-    filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+str(context['name']).lower())
+    filepath=''
+    #Проверяется нажата ли кнопка все акты сразу
+    if all_safe_enabled==1:
+        filepath=dir_path+'/Акт '+str(context['name']).lower()+'.docx'
+
+    elif all_safe_enabled==0:
+        filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+str(context['name']).lower())
     if filepath != "" and len(lst_xl)>1:
         # Заголовки таблицы (при использовании шаблона они не нужны и используюся только для подсчета
         # столбцов
@@ -83,7 +112,7 @@ def safe_act():
         # Количество колонок таблицы
         cols_number = len(headers)
 
-        new_table=fill_table(type_choies.get(),cols_number,lst_xl,new_table)
+        new_table=fill_table_project(type_choies.get(), cols_number, lst_xl, new_table)
 
         document.save(filepath)
 
@@ -124,7 +153,7 @@ root.title('Подготовка Актов')
 # Размер окна
 root.geometry('800x500+100+100')
 # Иконка в титуле приложения
-root.iconbitmap(default=resource_path('res/_brend.ico'))
+root.iconbitmap(default=resource_path('../res/_brend.ico'))
 
 # Стили
 font1 = font.Font(family= "Times New Roman", size=11, weight="bold", slant="roman", underline=False, overstrike=False)
@@ -200,23 +229,36 @@ type_var = StringVar(value=type_acts[0])
 type_choies=Combobox(textvariable=type_var, values=type_acts, state="readonly")
 type_choies.place(x=20, y=330, width=350)
 
+#enabled=IntVar()
+
+#Чек бокс для сохранения всех актов сразу
+#all_checkbox=Checkbutton(text='Сделать все акты сразу', variable=enabled, command=safe_all_acts)
+#all_checkbox.place(x=560, y=400)
+
 #Кнопка открытия спецификации
-file_button=Button(text='Открыть спец', command=open_table, font=("Arial", 12, "bold"))
-file_button.place(x=400, y=20)
+spec_button=Button(text='Открыть спец', command=open_table, font=("Arial", 12, "bold"))
+spec_button.place(x=400, y=20)
 
 #Кнопка открытия файла xlsx c полями шапки
 head_button=Button(text='Поля шапки', command=open_head, font=("Arial", 12, "bold"))
 head_button.place(x=560, y=20)
 
 #Кнопка создания актов
-btn=Button(text='Создать Акт', command=safe_act, font=("Arial", 12, "bold"))
-btn.place(x=560, y=320)
+act_button=Button(text='Создать Акт', command=safe_act, font=("Arial", 12, "bold"))
+act_button.place(x=560, y=320)
+
+all_safe_enabled=0
+#Кнопка сохранения всех актов сразу
+all_acts_button=Button(text='Все акты сразу', command=safe_all_acts, font=("Arial", 12, "bold"))
+all_acts_button.place(x=560, y=360)
+
 
 
 # Загрузка шаблона
-document = DocxTemplate(resource_path('res\Шаблон.docx'))
+document_spec = DocxTemplate(resource_path('../res/Шаблон.docx'))
 
 lst_xl=[]
+dir_path=''
 
 
 root.mainloop()

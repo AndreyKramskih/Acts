@@ -25,7 +25,7 @@ def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = os.path.abspath("..")
 
     return os.path.join(base_path, relative_path)
 
@@ -132,7 +132,7 @@ root["bg"] = "aquamarine4"
 # Размер окна
 root.geometry('800x500+100+100')
 # Иконка в титуле приложения
-root.iconbitmap(default=resource_path('res/_brend.ico'))
+root.iconbitmap(default=resource_path('../res/_brend.ico'))
 
 # Стили
 font1 = font.Font(family= "Times New Roman", size=11, weight="bold", slant="roman", underline=False, overstrike=False)
@@ -222,7 +222,7 @@ btn.place(x=560, y=320)
 
 
 # Загрузка шаблона
-document_spec = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
+document_spec = DocxTemplate(resource_path('../res/Шаблон_solid.docx'))
 
 tube_list=[]
 pad_list=[]
