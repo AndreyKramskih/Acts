@@ -2,7 +2,7 @@ import pandas as pd
 
 # Функция обработки спецификации проекта по новой форме
 #Функция открытия xlsx файла с помощью диалогового окна выбора файла в системе
-def spec_parce_new_separ(path:str, k:int=0) ->list:
+def spec_parce_new_separ(path:str) ->list:
 
     # Если файл выбран, то данные из листа с названием Table 1 читаются датафрейм пандас
     if path !="":
@@ -33,6 +33,21 @@ def spec_parce_new_separ(path:str, k:int=0) ->list:
         # находим строки где в первом столбце есть наименование
         ind=df_clean[df_clean[df.columns[1]].str.lower().str.contains('наименование')].index
         #print(ind)
+
+        # находим строки где в первом столбце есть слово блок
+        #ind_block = df_clean[df_clean[df.columns[1]].str.lower().str.contains('блок')].index
+        # создаем списпок названий блоков из спецификации
+        #name_blocks=list()
+        #for i in range(len(ind)):
+            #name_blocks.append(df_clean[df.columns[1]].iloc[ind_block[i]])
+
+        #print(name_blocks)
+        # ооздаем список номеров блоков
+        #number_of_blocks=list(range(1,len(name_blocks)+1))
+        #print(number_of_blocks)
+
+        #dict_blocks = dict(zip(number_of_blocks, name_blocks))
+        #print(dict_blocks)
 
         #создаем пустой список
         list_of_df=list()
@@ -70,15 +85,18 @@ def spec_parce_new_separ(path:str, k:int=0) ->list:
             # заменяем nan в первом столбце на пробел
             list_of_df_new[i] = list_of_df_new[i].fillna(' ')
 
-        #Проеферяем если к>len(list_of_df_new) то делаем его равным len(list_of_df_new)
-        if k>len(list_of_df_new):
-            k=len(list_of_df_new)
+
+        # создаем пустой список
+        new_list=[]
+        # проходимся по циклу и создаем список списков
+        for i in range(len(list_of_df_new)):
+            new_list.append((list_of_df_new[i].to_numpy()).tolist())
 
         # из датафрейма df создаем двумерный массив
-        new_arr = list_of_df_new[k].to_numpy()
+        #new_arr = list_of_df_new[k].to_numpy()
 
         # создаем список
-        new_list = new_arr.tolist()
+        #new_list = new_arr.tolist()
 
 
         return new_list
@@ -88,6 +106,52 @@ def spec_parce_new_separ(path:str, k:int=0) ->list:
        return empty_list
 
 
+def get_blocks(path:str) ->list:
+    # Если файл выбран, то данные из листа с названием Table 1 читаются датафрейм пандас
+    if path != "":
+        df = pd.read_excel(path)
+        # print(df.head())
+
+        # удаляем лишние столбцы из исходного датафрейма
+        df = df.drop(df.columns[[3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24]], axis=1)
+        # print(df.head())
+        # cоздаем список из названий столбцов полученного выше датафрейм
+        columns_names_df = df.columns.tolist()
+        # print(columns_names_df)
+        # удаляем все строки которые имеют Nan во втором стоблце датафрейм
+        df_clean = df.dropna(subset=columns_names_df[1])
+        # удаляем все строки которые имеют Nan во 4 стоблце датафрейм
+        df_clean = df.dropna(subset=columns_names_df[3])
+
+        # удаление строк из датарейма если во втором столбце есть фраза "наименование" при
+        # приведении в нижний регистр
+        # df_clean = df_clean.drop(df_clean[df_clean[df.columns[1]].str.lower().str.contains('наименование')].index)
+        # print(df_clean.shape[0])
+
+        # сбрасываем индексы датафрейма и обновляем их
+        df_clean.reset_index(drop=True, inplace=True)
+
+        # print(df_clean.shape[0])
+
+
+
+        # находим строки где в первом столбце есть слово блок
+        ind_block = df_clean[df_clean[df.columns[1]].str.lower().str.contains('блок')].index
+        # создаем списпок названий блоков из спецификации
+        name_blocks = list()
+        for i in range(len(ind_block)):
+            name_blocks.append(df_clean[df.columns[1]].iloc[ind_block[i]])
+
+        # print(name_blocks)
+        # ооздаем список номеров блоков
+        #number_of_blocks = list(range(1, len(name_blocks) + 1))
+        # print(number_of_blocks)
+
+        #dict_blocks = dict(zip(number_of_blocks, name_blocks))
+        # print(dict_blocks)
+        return name_blocks
+    else:
+        name_blocks=list()
 
 """""
 #Функция создания таблицы здесь не требуется так как мы заполняем существующую в шаблоне
