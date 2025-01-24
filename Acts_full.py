@@ -14,7 +14,7 @@ from tkinter.ttk import Style
 
 from Check.check_word_list import fill_table_project
 from Open.spec_project import spec_parce
-#from Open.spec_project_new import spec_parce_new
+from Open.spec_project_new_separ import spec_parce_new_separ
 from Info import info
 from View.specific_window import SpecificFrame, SolidFrame
 from Open.solid_spec import solid_parce
@@ -53,7 +53,7 @@ def safe_all_acts(event):
     if len(lst_xl) <= 1:
         info.info_act()
         return
-    global enabled
+    global all_safe_enabled
     enabled=1
     global document_spec
 
@@ -80,7 +80,7 @@ def safe_all_acts_solid(event):
     if len(tube_list) <= 1:
         info.info_act()
         return
-    global enabled
+    global all_safe_enabled
     enabled=1
     global document_solid
 
@@ -140,10 +140,10 @@ def safe_act_project(event):
     # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
     filepath=''
     #Проверяется нажата ли кнопка все акты сразу
-    if enabled==1:
+    if all_safe_enabled==1:
         filepath=dir_path+'/Акт '+str(context['name']).lower()+'.docx'
 
-    elif enabled==0:
+    elif all_safe_enabled==0:
         filepath = filedialog.asksaveasfilename(defaultextension='docx', initialfile='Акт '+str(context['name']).lower())
     if filepath != "" and len(lst_xl)>1:
         # Заголовки таблицы (при использовании шаблона они не нужны и используюся только для подсчета
@@ -203,10 +203,10 @@ def safe_act_solid(event):
  # Если спецификация загружена и выбран файл для сохранения акта, то выполняется код ниже
     filepath = ''
     # Проверяется нажата ли кнопка все акты сразу
-    if enabled == 1:
+    if all_safe_enabled == 1:
         filepath = dir_path + '/Акт ' + str(context['name']).lower() + '.docx'
 
-    elif enabled == 0:
+    elif all_safe_enabled == 0:
         filepath = filedialog.asksaveasfilename(defaultextension='docx',
                                                     initialfile='Акт ' + str(context['name']).lower())
     if filepath != "" and len(tube_list) > 1:
@@ -264,7 +264,7 @@ def open_table_project(event):
     info.info_spec()
     table_path=filedialog.askopenfilename()
     global lst_xl
-    #lst_xl=spec_parce(table_path)
+    #lst_xl=spec_parce_new_separ(table_path, 1)
     lst_xl = spec_parce(table_path)
 
 
@@ -373,7 +373,7 @@ solid_frame.all_acts_button.bind("<ButtonRelease-1>", safe_all_acts_solid)
 # Загрузка шаблона
 document_spec = DocxTemplate(resource_path('res\Шаблон.docx'))
 document_solid = DocxTemplate(resource_path('res\Шаблон_solid.docx'))
-enabled=0
+all_safe_enabled=0
 lst_xl=[]
 dir_path=''
 tube_list=[]
