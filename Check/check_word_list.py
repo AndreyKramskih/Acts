@@ -97,8 +97,9 @@ def fill_table_project(choice:str, col_number:int, list_for_check:list, table_fo
             s_list += [x for x in list_for_check if 'предохранительный' in str(x).lower()]
             s_list += [x for x in list_for_check if 'соленоидный' in str(x).lower()]
             s_list += [x for x in list_for_check if 'накип' in str(x).lower()]
-            s_list += [x for x in list_for_check if 'запорный' in str(x).lower()]
+            s_list += [x for x in list_for_check if 'запорный' in str(x).lower() and not ('шаровой' in str(x).lower())]
             s_list += [x for x in list_for_check if 'сепаратор' in str(x).lower()]
+            s_list += [x for x in list_for_check if 'шаровой' in str(x).lower() and not ('запорный' in str(x).lower())]
 
 
 
@@ -138,6 +139,9 @@ def fill_table_project(choice:str, col_number:int, list_for_check:list, table_fo
             ss_list += [x for x in list_for_check if 'предохранительный' in str(x).lower()]
             ss_list += [x for x in list_for_check if 'соленоидный' in str(x).lower()]
             ss_list += [x for x in list_for_check if 'накип' in str(x).lower()]
+            ss_list += [x for x in list_for_check if 'запорный' in str(x).lower() and not ('шаровой' in str(x).lower())]
+            ss_list += [x for x in list_for_check if 'шаровой' in str(x).lower() and not ('запорный' in str(x).lower())]
+
 
             ss_list += [x for x in list_for_check if 'сепаратор' in str(x).lower()]
 
